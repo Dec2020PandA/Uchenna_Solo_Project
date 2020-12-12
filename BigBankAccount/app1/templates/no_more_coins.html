@@ -10,7 +10,7 @@
   </head>
   <body>
         <h2>No more coins:</h2>
-        <p>Your Gold: {{request.session.gold}}</p>
+        <p>Your Gold: {{user.gold}}</p>
         <form  action="/add_coins" method="post">
             {% csrf_token %}
             <button name='add_coins' type="submit">Add coins</button>

@@ -39,7 +39,9 @@ def process_money(request):
             
 
         if 'farm' in request.POST:
-            request.session['coins']-= int(1)
+            user.coins -= int(1)
+            user.save()
+            
             gift=random.randint(10, 30)
             user.account_balance += gift
             user.save()
@@ -48,7 +50,8 @@ def process_money(request):
 
             
         elif 'cave' in request.POST:
-            request.session['coins']-= int(1)
+            user.coins -= int(1)
+            user.save()
             var_num=random.randint(20, 50)
             
             if (random.randint(1, 5)!=1):
@@ -63,7 +66,8 @@ def process_money(request):
      
             
         elif 'house' in request.POST:
-            request.session['coins']-= int(1)
+            user.coins -= int(1)
+            user.save()
             var_num = random.randint(50,80)
             var_num_half = random.randint(25,40)
             if (random.randint(1, 2)==1):
@@ -78,7 +82,8 @@ def process_money(request):
             
                    
         elif 'casino' in request.POST:
-            request.session['coins']-= int(1)
+            user.coins -= int(1)
+            user.save()
             var_num = random.randint(80, 150)
             var_num_half = random.randint(40,75)
             
@@ -92,14 +97,19 @@ def process_money(request):
                 user.save()
                 request.session['activities'].append("You just lost {} from the casino: ({})".format(var_num_half,time))
 
-        if request.session['coins']==0:
+        if user.coins==0:
             return redirect("/no_more_coins")
         else:
             return redirect("/")    
 
+
 def no_more_coins(request):
+    user = User.objects.get(id=request.session['user_id'])
+    context = {
+    "user":user
+}
     
-    return render(request, "no_more_coins.html")  
+    return render(request, "no_more_coins.html",context)  
     
 
 def add_coins(request):
@@ -107,7 +117,10 @@ def add_coins(request):
         return redirect('/')   
         
     if request.method == 'POST':
-        request.session['coins']+= int(request.POST['coins_to_add'])
+        user = User.objects.get(id=request.session['user_id'])
+        user.coins += int(request.POST['coins_to_add'])
+        user.save()
+
         return redirect('/')
 
 def reset(request):
@@ -183,8 +196,12 @@ def withdraw(request):
     return redirect('/')
     
     
-    
-
+def display_account(request):
+    user = User.objects.get(id=request.session['user_id'])
+    context = {
+    "user":user
+}
+    return render(request,"display_account.html",context)
 
 
 def logout(request):
