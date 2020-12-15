@@ -8,14 +8,14 @@
 }
 div{
     width:auto;
-    margin:5px;
+    margin:20px;
+    background-color: rgba(230, 227, 227, 0.63);
     border: solid black 3px;
     display: inline-block;
     padding:20px;
 }
 
 #activities{
-    width: 1000;
     height: 100px;
     overflow-y:auto;
     
@@ -40,5 +40,8 @@ div{
        display: none;
    }
  
-   
+#no_more_coins{
+    width: 1200px;
+    background-color: rgba(255, 255, 255, 0.849);
+}
    

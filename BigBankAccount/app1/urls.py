@@ -10,6 +10,7 @@ urlpatterns = [
     path('display_register',views.display_register),
     path('display_invest',views.display_invest),
     path('display_account',views.display_account),
+    path('increase_investment',views.increase_investment),
     path('invest',views.invest),
     path('withdraw',views.withdraw),
     path('login',views.login),

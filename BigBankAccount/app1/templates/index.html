@@ -11,11 +11,11 @@
   <body>
       
       <div id='above_wrapper'>
-          
+        <div><p><a href='/'>Home</a> </p></div>  
             <div><p>Your Gold: {{user.account_balance}}</p></div>
             <div><p>Coins: {{user.coins}}</p></div>
             <div><p><a href='/display_invest'>Invest:</a> {{user.invested_balance}}</p></div>
-            <div><p>Account</p></div>
+            <div><p><a href='/display_account'>Account</a></p></div>
             <div><p><a href='/logout'>Logout</a></p></div>
       </div>
       
@@ -66,7 +66,7 @@
       
      
   
-      <p>Activities:</p>
+      <p> Recent Activity:</p>
       <div id='activities'>
           <ul>
               {% for x in request.session.activities %}

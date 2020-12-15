@@ -49,6 +49,11 @@ class UserManager(models.Manager):
             username = form['username'],
             password = pw,
             account_balance = 0,
+            coins = 5,
+            investment_click_counter = 5,
+            invested_balance = 0,
+            coin_click_counter = 5
+
             
         )
 
@@ -62,7 +67,11 @@ class User(models.Model):
     coins = models.IntegerField()
     invested_balance = models.IntegerField()
     date_joined = models.DateTimeField(auto_now_add=True)
+    investment_click_counter = models.IntegerField()
+    coin_click_counter = models.IntegerField()
+    level = models.CharField(max_length=50) 
     objects = UserManager()
+
 
 class Account(models.Model):
     account_balance = models.IntegerField()

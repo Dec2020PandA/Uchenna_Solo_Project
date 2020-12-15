@@ -7,23 +7,20 @@ from time import gmtime, strftime
 def index(request):
     if 'user_id' not in request.session:
         return redirect('/display_login')
-
-            
-    if 'activities' not in request.session:
-        request.session['activities'] = []
-
-    if 'coins' not in request.session:
-        request.session['coins']= int(20)
-    
-    if request.session['coins']==0:
-        return redirect("/no_more_coins")
-    
-    
     
     user = User.objects.get(id=request.session['user_id'])
     context = {
     "user":user
 }
+        
+    if 'activities' not in request.session:
+        request.session['activities'] = []
+        
+
+    
+    if user.coins == 0:
+        return redirect("/no_more_coins")
+    
     return render(request, "index.html",context)
 
 # Create your views here.
@@ -37,7 +34,6 @@ def process_money(request):
         time=strftime("%Y-%m-%d %H:%M %p", gmtime())
 
             
-
         if 'farm' in request.POST:
             user.coins -= int(1)
             user.save()
@@ -118,10 +114,18 @@ def add_coins(request):
         
     if request.method == 'POST':
         user = User.objects.get(id=request.session['user_id'])
-        user.coins += int(request.POST['coins_to_add'])
-        user.save()
+        if user.coin_click_counter != 1:
+            user.coin_click_counter -= 1
+            user.save()
+        else:
+            user.coin_click_counter = 5
+            user.coins += 5
+            user.save()
+            return redirect('/')
 
-        return redirect('/')
+        
+
+        return redirect('/no_more_coins')
 
 def reset(request):
     request.session.flush()
@@ -159,19 +163,46 @@ def register(request):
              
         return redirect('/')
 
-def multiply(request):
-    pass
+def increase_investment(request):
+    
+    user = User.objects.get(id=request.session['user_id'])
+    
+    if user.invested_balance <1:
+        messages.error(request, "You don't have anything in your account")
+        return redirect('/display_invest')
+
+    if user.investment_click_counter != 1:
+        user.investment_click_counter -= 1
+        user.save()
+    else:
+        user.investment_click_counter = 5
+        
+        add_to_investment = int(user.invested_balance / 10)
+        user.invested_balance += add_to_investment
+        user.save()
+        messages.error(request, "Added "+str(add_to_investment)+" to your invested account")
+    return redirect('/display_invest') 
+
+
 
 def display_invest(request):
-    return render(request,"invest.html")
+    user = User.objects.get(id=request.session['user_id'])
+    context = {
+    "user":user
+}
+    return render(request,"invest.html",context)
 
 def invest(request):
     if request.method == "GET":
         return redirect('/')
     
     user = User.objects.get(id=request.session['user_id'])
-    if user.account_balance < 1:
-        messages.error(request, 'You cannot invest with a deficit account')
+    if user.account_balance < 100:
+        messages.error(request, 'You need at least 100 in your account to invest ')
+        return redirect('/display_invest')
+        
+    if int(request.POST['amount']) < 100:
+        messages.error(request, 'The minimum amount to deposit is 100')
         return redirect('/display_invest')
 
     
@@ -179,7 +210,7 @@ def invest(request):
     user.account_balance -= int(request.POST['amount'])
     user.invested_balance += int(request.POST['amount'])
     user.save()
-    return redirect('/')
+    return redirect('/display_invest')
 
 def withdraw(request):
     if request.method == "GET":
@@ -193,7 +224,7 @@ def withdraw(request):
     user.invested_balance -= int(request.POST['amount'])
     user.account_balance += int(request.POST['amount'])
     user.save()
-    return redirect('/')
+    return redirect('/display_invest')
     
     
 def display_account(request):
