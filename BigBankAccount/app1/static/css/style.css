@@ -15,7 +15,8 @@ div{
 }
 
 #activities{
-    width: 1000;
+    background-color: rgba(19, 168, 255, 0.993);
+    width: 1000px;
     height: 100px;
     overflow-y:auto;
     
@@ -36,9 +37,7 @@ div{
     padding: 16px;
    }
 
-   .notranslate{
-       display: none;
-   }
+   
  
    
    

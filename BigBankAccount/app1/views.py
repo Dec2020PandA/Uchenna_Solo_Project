@@ -9,14 +9,13 @@ def index(request):
         return redirect('/display_login')
     
     user = User.objects.get(id=request.session['user_id'])
+
     context = {
     "user":user
 }
-        
-    if 'activities' not in request.session:
-        request.session['activities'] = []
-        
-
+    
+    #if 'activities' not in request.session:
+        #request.session['activities'] = []
     
     if user.coins == 0:
         return redirect("/no_more_coins")
@@ -29,22 +28,22 @@ def process_money(request):
         return redirect('/')   
         
     if request.method == 'POST':
-        
+        print(request.POST)
+        print("jijfijgifgji")
         user = User.objects.get(id=request.session["user_id"])
         time=strftime("%Y-%m-%d %H:%M %p", gmtime())
 
             
-        if 'farm' in request.POST:
+        if request.POST['place'] == 'farm':
+            print("Test1")
             user.coins -= int(1)
-            user.save()
-            
             gift=random.randint(10, 30)
             user.account_balance += gift
             user.save()
             
-            request.session['activities'].append("You just gained {} from the farm: ({})".format(gift,time))
-
-            
+            #request.session['activities'].append("You just gained {} from the farm: ({})".format(gift,time))
+            request.session['activities'].append("String")
+            print(request.session['activities'])
         elif 'cave' in request.POST:
             user.coins -= int(1)
             user.save()
@@ -55,10 +54,10 @@ def process_money(request):
                 user.save()
                 request.session['activities'].append("You just gained {} from the cave: ({})".format(var_num,time))
             else:
-                
+                var_num_half = var_num
                 user.account_balance -= var_num
                 user.save()
-                request.session['activities'].append("You just lost {} from the cave: ({})".format(var_num_half,time))
+                request.session['activities'].append("You just lost {} from the cave: ({})".format(var_num,time))
      
             
         elif 'house' in request.POST:
@@ -200,7 +199,11 @@ def invest(request):
     if user.account_balance < 100:
         messages.error(request, 'You need at least 100 in your account to invest ')
         return redirect('/display_invest')
-        
+
+    if int(request.POST['amount']) > user.account_balance:
+        messages.error(request, "You can't invest more than you have")
+        return redirect('/display_invest')
+
     if int(request.POST['amount']) < 100:
         messages.error(request, 'The minimum amount to deposit is 100')
         return redirect('/display_invest')
