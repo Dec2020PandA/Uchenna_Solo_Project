@@ -26,8 +26,8 @@
                   {% csrf_token %}
                   <h2>100</h2>
                   <p>100% chance to get 10-30</p>
-                  <input type='hidden' value='farm' name ='place'>                 
-                  <button type="submit">Find Gold</button>
+                                  
+                  <button name='farm' type="submit">Find Gold</button>
             
               </form>
       </div>
@@ -69,7 +69,7 @@
       
       <div id='activities'>
           <ul>
-            {{request.session.activities}}
+            
               {% for x in request.session.activities %}
                   <li>{{x}}</li>
               {% endfor %}
